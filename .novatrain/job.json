@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "request_id": "windows-e2e-20260904-01",
+  "enabled": true,
+  "data": {
+    "mode": "none"
+  },
+  "training": {
+    "entrypoint": "novatrain_selftest.py",
+    "args": [],
+    "distributed_compatible": false,
+    "output_paths": [".novatrain/output"],
+    "timeout_hours": 1
+  },
+  "publish": {
+    "github_release": true,
+    "max_release_asset_mb": 50,
+    "issue_status": true
+  }
+}
