@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "request_id": "vision-suite-20260904-01",
+  "request_id": "vision-suite-v2-20260904-01",
   "enabled": true,
   "data": {
     "mode": "none"
   },
   "training": {
-    "entrypoint": "novatrain_vision_suite.py",
+    "entrypoint": "novatrain_vision_suite_v2.py",
     "args": [],
     "requirements": "novatrain_requirements.txt",
     "distributed_compatible": false,
