@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "version": "4.1.0",
+  "files": [
+    {
+      "source": ".novatrain/releases/4.1.0/worker.py.gz.b64",
+      "target": "worker.py",
+      "encoding": "gzip-base64",
+      "sha256": "72f98fefaaa1e62e54fb860a2f91f56335d439f90f8c984af6b71ff6ead08b68"
+    },
+    {
+      "source": ".novatrain/releases/4.1.0/telemetry.py.gz.b64",
+      "target": "telemetry.py",
+      "encoding": "gzip-base64",
+      "sha256": "337164c0d4384289f9e09a05a4dd3f078f7ba30068f82a60ba50028f79524157"
+    },
+    {
+      "source": ".novatrain/releases/4.1.0/updater.py.gz.b64",
+      "target": "updater.py",
+      "encoding": "gzip-base64",
+      "sha256": "56ff6d3133b3b92eab86e8d40f5e8e59bf640dcd53040a52932473396c293a5d"
+    }
+  ]
+}
