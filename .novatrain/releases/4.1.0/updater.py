@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+import gzip
 import hashlib
 import json
 import os
@@ -82,6 +84,14 @@ def maybe_apply_update(worker_root: Path) -> dict[str, object] | None:
         blob = fetch_file(repo, source, snapshot.commit_sha)
         if blob is None:
             raise RuntimeError(f"NovaTrain update source missing: {source}")
+        encoding = str(item.get("encoding", "raw")).strip().lower()
+        if encoding == "gzip-base64":
+            try:
+                blob = gzip.decompress(base64.b64decode(b"".join(blob.split()), validate=True))
+            except Exception as exc:
+                raise RuntimeError(f"unable to decode NovaTrain update payload: {source}") from exc
+        elif encoding != "raw":
+            raise RuntimeError(f"unsupported NovaTrain update encoding: {encoding}")
         actual = hashlib.sha256(blob).hexdigest()
         if actual != expected:
             raise RuntimeError(f"NovaTrain update hash mismatch for {source}")
