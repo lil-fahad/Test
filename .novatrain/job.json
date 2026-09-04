@@ -1,21 +1,20 @@
 {
   "version": 1,
-  "request_id": "vision-suite-v2-20260904-01",
+  "request_id": "novatrain-upgrade-v41-20260904-01",
   "enabled": true,
   "data": {
     "mode": "none"
   },
   "training": {
-    "entrypoint": "novatrain_vision_suite_v2.py",
+    "entrypoint": "novatrain_upgrade_v41.py",
     "args": [],
-    "requirements": "novatrain_requirements.txt",
     "distributed_compatible": false,
     "output_paths": [".novatrain/output"],
-    "timeout_hours": 6
+    "timeout_hours": 1
   },
   "publish": {
     "github_release": true,
-    "max_release_asset_mb": 1900,
+    "max_release_asset_mb": 50,
     "issue_status": true
   }
 }
