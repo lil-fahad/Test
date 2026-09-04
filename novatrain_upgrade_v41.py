@@ -106,8 +106,8 @@ def main() -> None:
             "enabled": True,
             "repo": "lil-fahad/Test",
             "path": ".novatrain/worker_update.json",
-            "branch": "main",
-        },
+            "branch": "main"
+        }
     }
     worker_root.mkdir(parents=True, exist_ok=True)
     config_path = worker_root / "config.json"
@@ -116,6 +116,8 @@ def main() -> None:
     os.replace(tmp, config_path)
 
     system_python = install / "venv" / "Scripts" / "python.exe" if os.name == "nt" else install / "venv" / "bin" / "python"
+    smoke_version = None
+    smoke_capabilities = None
     if system_python.is_file():
         proc = subprocess.run(
             [str(system_python), "-m", "py_compile", *(str(package_dir / target) for _, target, _ in PAYLOADS)],
@@ -125,6 +127,24 @@ def main() -> None:
         )
         if proc.returncode != 0:
             raise RuntimeError(proc.stderr.strip() or "installed NovaTrain code failed syntax validation")
+        smoke_env = os.environ.copy()
+        smoke_env["PYTHONPATH"] = str(install / "package")
+        version_proc = subprocess.run(
+            [str(system_python), "-m", "tools.novatrain_x4.worker", "--version"],
+            env=smoke_env, capture_output=True, text=True, check=False, timeout=30,
+        )
+        if version_proc.returncode != 0 or version_proc.stdout.strip() != VERSION:
+            raise RuntimeError(version_proc.stderr.strip() or f"NovaTrain smoke test returned {version_proc.stdout.strip()!r}")
+        smoke_version = version_proc.stdout.strip()
+        cap_proc = subprocess.run(
+            [str(system_python), "-m", "tools.novatrain_x4.worker", "--root", str(worker_root), "--capabilities"],
+            env=smoke_env, capture_output=True, text=True, check=False, timeout=60,
+        )
+        if cap_proc.returncode == 0:
+            try:
+                smoke_capabilities = json.loads(cap_proc.stdout)
+            except json.JSONDecodeError:
+                smoke_capabilities = {"raw": cap_proc.stdout[-4000:]}
 
     restart_scheduled = schedule_worker_restart()
     out = repo_root / ".novatrain" / "output"
@@ -136,7 +156,9 @@ def main() -> None:
         "backup": str(backup),
         "update_config": str(config_path),
         "restart_scheduled": restart_scheduled,
-        "message": "NovaTrain-X4.1 installed; scheduled worker will restart automatically.",
+        "smoke_version": smoke_version,
+        "smoke_capabilities": smoke_capabilities,
+        "message": "NovaTrain-X4.1 installed; scheduled worker will restart automatically."
     }
     (out / "upgrade-v41.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     print("NOVATRAIN_PROGRESS " + json.dumps({"phase": "upgrade", "progress": 1.0, "version": VERSION}), flush=True)
